@@ -1,73 +1,104 @@
-# SOLE Footwear 👟
+# SOLE Footwear — Premium E-Commerce & Admin Dashboard
 
-SOLE is a premium, full-stack e-commerce web application engineered at the intersection of performance and design. Built for high-end sneaker enthusiasts, it features interactive 3D product models, a sleek brutalist dark-mode aesthetic, and a fully functional administrative dashboard.
+A premium, full-stack e-commerce web application engineered at the intersection of performance and design. Built for high-end sneaker enthusiasts, it features interactive 3D product models, a sleek brutalist dark-mode aesthetic, complete cart functionality, and a secure administrative dashboard.
 
-## 🌟 Key Features
+## 🚀 Live Demo & Deployments
+- **Frontend & Backend**: Deployed on Railway
 
-### Frontend (Client-Side)
-- **Interactive 3D Shoe Viewer**: Implemented using Three.js, allowing users to rotate and inspect sneaker models dynamically.
-- **Custom Design System**: A premium dark-mode aesthetic built purely with vanilla CSS (no Tailwind), utilizing glassmorphism, fluid typography, and custom animations.
-- **Dynamic Cart Management**: Complete add-to-cart logic with local storage synchronization.
-- **Smart Reviews System**: Users can view, scroll, and add product reviews.
-- **Custom UI Elements**: A globally injected custom cursor and micro-interactions for a highly polished feel.
+## ✨ Features
 
-### Backend (Server-Side)
-- **Node.js & Express API**: Robust RESTful architecture handling all data operations.
-- **MongoDB Database**: Persistent storage for products, orders, user accounts, and reviews.
-- **JWT Authentication**: Secure user login, registration, and role-based access control (Admin vs User).
-- **Admin Dashboard**: A secure portal where admins can:
-  - Add and delete shoes from the catalog.
-  - View live incoming customer orders.
-  - Update tracking codes and order statuses (Processing, Shipped, Delivered).
+### 🛍️ Premium E-Commerce
+- **Interactive 3D Viewer**: Browse and inspect sneaker models dynamically in 360 degrees using Three.js WebGL integration.
+- **Custom Design System**: A sleek, brutalist dark-mode aesthetic built purely with vanilla CSS. Includes glassmorphism, fluid typography, smooth micro-animations, and a custom interactive cursor.
+- **Dynamic Cart Management**: Complete add-to-cart logic, quantity adjustments, and local storage synchronization for a seamless shopping experience.
+- **Smart Reviews System**: Users can view, scroll, and dynamically interact with product reviews.
+- **Order Tracking**: Customers can track their package status in real-time using their order ID and email address.
 
-## 💻 Tech Stack
+### 🛡️ Admin Dashboard
+- **Product Management**: Full CRUD operations to add, edit, or remove shoes from the live catalog.
+- **Live Order Monitoring**: View and manage all incoming customer orders in real-time.
+- **Fulfillment Operations**: Update tracking codes and transition order statuses (Processing, Shipped, Delivered).
+- **Secure Access**: JWT role-based authentication ensures only authorized admin accounts (`admin@sole.com`) can access the dashboard and modify the database.
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript, Three.js
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB (Mongoose ODM)
-- **Authentication**: JSON Web Tokens (JWT), bcryptjs
-- **Deployment**: Railway / Render compatible
+## 🛠️ Technology Stack
 
-## 🚀 Getting Started
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Frontend** | HTML5 & CSS3 | Pure Vanilla custom styling architecture (no external UI libraries) |
+| | Vanilla JavaScript | Client-side logic, API communication, and dynamic DOM manipulation |
+| | Three.js | WebGL library for rendering interactive 3D models |
+| **Backend** | Node.js & Express | High-performance RESTful API server |
+| | MongoDB (Atlas) | Cloud NoSQL database for persistent data storage |
+| | Mongoose ODM | Object Data Modeling for elegant MongoDB interactions |
+| | BCryptJS | Secure cryptographic password hashing |
+| | JSON Web Tokens | Stateless, secure authentication and role authorization |
+| | Cors | Cross-Origin Resource Sharing middleware |
 
-To run this project locally on your machine, follow these steps:
+## 📂 Project Structure
 
-### Prerequisites
-- Node.js (v18 or higher recommended)
-- A MongoDB URI connection string
+```text
+SOLE-Footwear/
+├── backend/
+│   ├── config/           # Database connection configuration (db.js)
+│   ├── controllers/      # Logic for API routes (auth, products, orders)
+│   ├── models/           # Mongoose schemas (User, Product, Order, Review)
+│   ├── routes/           # Express API endpoints
+│   ├── server.js         # Backend Express server entry point
+│   └── package.json      # Backend dependencies and startup scripts
+├── frontend/
+│   ├── assets/           # Images, 3D models (.glb), icons
+│   ├── styles/           # Custom design system and responsive stylesheets
+│   ├── js/               # Frontend logic (store.js, cart.js, auth.js, etc.)
+│   └── *.html            # Application views (index, checkout, admin, etc.)
+├── README.md             # Project documentation
+└── package.json          # Root-level orchestrator and deployment scripts
+```
 
-### Installation
+## 💻 Local Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/Sole-Footwear.git
-   cd Sole-Footwear
-   ```
+Run the application locally on your machine:
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-   *(Note: Our custom `package.json` install script will automatically CD into the backend folder and install the necessary Node modules.)*
+### 1. Prerequisites
+- Node.js installed (v18 or v20 recommended).
+- Git installed.
+- A MongoDB cluster/URI string.
 
-3. **Set up Environment Variables**
-   Create a `.env` file inside the `backend` folder and add the following keys:
-   ```env
-   PORT=5000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_super_secret_jwt_key
-   ```
+### 2. Clone the Repository
+```bash
+git clone https://github.com/Faizan-Fr-Dev/Sole-Footwear.git
+cd Sole-Footwear
+```
 
-4. **Run the Application**
-   ```bash
-   npm start
-   ```
+### 3. Install All Dependencies
+Install the required packages. Our root `package.json` script will automatically handle the backend installations:
+```bash
+npm install
+```
 
-5. **View in Browser**
-   Open your browser and navigate to `http://localhost:5000`. The Express server automatically serves the frontend static files!
+### 4. Set Up Environment Variables
+Create a `.env` file inside the `backend` folder and add your connection strings:
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_super_secret_jwt_key
+```
 
-## 🔐 Admin Access
-To access the `/admin.html` dashboard, you must register a user account with the email `admin@sole.com`. The system will automatically grant this account admin privileges.
+### 5. Run the Server
+Start the Express server, which will automatically serve the API and the frontend UI:
+```bash
+npm start
+```
+Open `http://localhost:5000` in your browser to view the application.
 
----
-*Designed and engineered by Faizan-Fr-Dev.*
+## ☁️ Deployment
+
+**Backend & Frontend (Railway)**
+1. Link your GitHub repository to Railway.
+2. In your Railway project, navigate to the **Variables** tab and add your Environment Variables (`MONGO_URI`, `JWT_SECRET`).
+3. Add `NIXPACKS_NODE_VERSION` with a value of `20` to ensure compatibility with MongoDB's latest cryptographic requirements.
+4. Do **NOT** set a `PORT` variable; Railway will dynamically map its own port automatically.
+5. Railway will automatically detect the root `package.json` and deploy both the Node.js backend and the statically served frontend as a single robust application!
+
+## 👤 Author
+
+Designed and engineered with 💻 by **Faizan-Fr-Dev**
