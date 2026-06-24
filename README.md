@@ -70,4 +70,4 @@ To run this project locally on your machine, follow these steps:
 To access the `/admin.html` dashboard, you must register a user account with the email `admin@sole.com`. The system will automatically grant this account admin privileges.
 
 ---
-*Designed & Engineered for the SS 2026 Collection.*
+*Designed and engineered by Faizan-Fr-Dev.*
