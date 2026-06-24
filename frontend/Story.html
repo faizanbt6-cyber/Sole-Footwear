@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOLE  Our Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #080808;
+    --fg: #f0ece4;
+    --accent: #e8ff47;
+    --accent2: #ff4d2e;
+    --muted: #5a5850;
+    --card-bg: #111110;
+    --border: rgba(240,236,228,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  #cursor.hover { width: 40px; height: 40px; background: var(--fg); }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.4;
+  }
+
+    /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 48px;
+    z-index: 100;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .nav-links {
+    list-style: none; display: flex; gap: 32px; align-items: center;
+  }
+  .nav-links a {
+    color: var(--fg); text-decoration: none; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 1px;
+    opacity: 0.6; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  /* STORY SECTIONS */
+  .story-section {
+    padding: 120px 48px 80px;
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  .story-hero {
+    text-align: center;
+    margin-bottom: 100px;
+  }
+  .story-hero .section-label { margin-bottom: 24px; }
+  .story-hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 8vw, 120px);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    color: var(--fg);
+    margin-bottom: 32px;
+  }
+  .story-hero p {
+    font-size: 18px; line-height: 1.6;
+    color: rgba(240,236,228,0.7);
+    max-width: 600px; margin: 0 auto;
+  }
+
+  .timeline {
+    position: relative;
+    margin: 100px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    transform: translateX(-50%);
+  }
+
+  .timeline-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 80px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+  .timeline-item.visible { opacity: 1; transform: translateY(0); }
+
+  .timeline-dot {
+    width: 20px; height: 20px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .timeline-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 32px;
+    margin: 0 40px;
+    border-radius: 8px;
+    max-width: 400px;
+  }
+  .timeline-item:nth-child(even) .timeline-content { margin-left: 0; margin-right: 40px; }
+
+  .timeline-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px; letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .timeline-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .timeline-text {
+    font-size: 14px; line-height: 1.6;
+    color: rgba(240,236,228,0.8);
+  }
+
+  .quote-section {
+    text-align: center;
+    padding: 100px 0;
+    background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg) 100%);
+    margin: 100px 0;
+  }
+
+  .quote {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px; font-weight: 300;
+    line-height: 1.4;
+    color: var(--fg);
+    max-width: 800px; margin: 0 auto 24px;
+    position: relative;
+  }
+  .quote::before, .quote::after {
+    content: '"';
+    font-size: 60px;
+    color: var(--accent);
+    position: absolute;
+    top: -20px;
+  }
+  .quote::before { left: -40px; }
+  .quote::after { right: -40px; }
+
+  .quote-author {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-top: 80px;
+  }
+
+  .process-item {
+    text-align: center;
+  }
+
+  .process-icon {
+    width: 80px; height: 80px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 32px;
+    color: #080808;
+  }
+
+  .process-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .process-desc {
+    font-size: 14px; line-height: 1.6;
+    color: rgba(240,236,228,0.7);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 80px 48px 40px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 64px;
+  }
+
+  .footer-brand .nav-logo { font-size: 48px; display: block; margin-bottom: 16px; color: var(--fg); text-decoration: none; }
+  .footer-brand p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul a {
+    font-size: 14px; color: var(--fg);
+    text-decoration: none; opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .footer-col ul a:hover { opacity: 1; }
+
+  .footer-bottom {
+    padding: 24px 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+      .hamburger { display: none; background: none; border: none; color: var(--fg, #f0ece4); font-size: 28px; cursor: pointer; }
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; flex-direction: row; justify-content: space-between; align-items: center; background: rgba(8,8,8,0.95); backdrop-filter: blur(10px); z-index: 1000; position: fixed; width: 100%; top: 0; }
+    .hamburger { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(8,8,8,0.98); padding: 24px; flex-direction: column; gap: 20px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .nav-links.active { display: flex; }
+    .nav-links li { width: 100%; text-align: center; }
+    .nav-links a { font-size: 16px; padding: 10px; display: block; }
+    
+    #hero { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 100px; }
+    .hero-content { margin-top: 0; padding: 0 24px; width: 100%; text-align: center; order: 1; }
+    .hero-eyebrow { justify-content: center; }
+    #hero-canvas { position: relative; height: 50vh; width: 100%; inset: auto; margin-top: auto; order: 2; }
+    
+    #feature { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 80px; }
+    .feature-content { padding: 0 24px; width: 100%; text-align: center; margin-bottom: 20px; order: 1; }
+    .feature-content p { margin: 20px auto; }
+    #feature-canvas { position: relative; height: 50vh; width: 100%; inset: auto; order: 2; }
+
+    .story-section { padding: 100px 24px 60px; }
+    .timeline::before { left: 20px; }
+    .timeline-item { flex-direction: column; text-align: center; }
+    .timeline-item:nth-child(even) { flex-direction: column; }
+    .timeline-content { margin: 20px 0; }
+    .quote { font-size: 24px; }
+    .process-grid { grid-template-columns: 1fr; }
+    footer { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px 32px; }
+    .footer-bottom { padding: 20px 24px; flex-direction: column; gap: 8px; }
+  }
+
+  nav.scrolled {
+    background: rgba(8, 8, 8, 0.95);
+    backdrop-filter: blur(10px);
+    mix-blend-mode: normal;
+    
+    transition: all 0.3s ease;
+  }
+</style>
+<link rel="stylesheet" href="styles/responsive.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e8ff47'/><text x='50' y='70' font-family='Arial' font-weight='bold' font-size='60' text-anchor='middle' fill='%23080808'>S</text></svg>">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">SOLE</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="Collection.html">Collection</a></li>
+    <li><a href="Story.html">Story</a></li>
+    <li><a href="Lookbook.html">Lookbook</a></li>
+    <li><a href="cart.html">Cart (0)</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<!-- STORY HERO -->
+<section class="story-section story-hero">
+  <div class="section-label">Our Journey</div>
+  <h1>FORGED IN<br>PRECISION</h1>
+  <p>From a single idea in a garage workshop to redefining footwear worldwide. Every step, every stitch  a testament to relentless innovation and uncompromising quality.</p>
+</section>
+
+<!-- TIMELINE -->
+<section class="story-section">
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-year">2014</div>
+        <div class="timeline-title">The Spark</div>
+        <div class="timeline-text">Founded by three engineers frustrated with mass-produced shoes that sacrificed performance for profit. The first prototype was born in a cluttered workshop.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-year">2016</div>
+        <div class="timeline-title">First Breakthrough</div>
+        <div class="timeline-text">Developed the revolutionary carbon-fiber midsole technology, reducing weight by 40% while increasing energy return by 25%.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-year">2018</div>
+        <div class="timeline-title">Global Recognition</div>
+        <div class="timeline-text">Won the International Design Excellence Award. First international orders from elite athletes and fashion icons.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-year">2020</div>
+        <div class="timeline-title">Sustainability Focus</div>
+        <div class="timeline-text">Pioneered 100% recycled materials in production. Committed to carbon-neutral manufacturing by 2025.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-year">2022</div>
+        <div class="timeline-title">AI Integration</div>
+        <div class="timeline-text">Launched smart soles with embedded sensors for real-time performance analytics and personalized fit adjustments.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-year">2026</div>
+        <div class="timeline-title">The Future</div>
+        <div class="timeline-text">SS 2026 Collection: Where technology meets artistry. Pushing boundaries further than ever before.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section">
+  <div class="quote">Shoes aren't just footwear. They're the foundation of every journey, every victory, every dream. We build legacies, one step at a time.</div>
+  <div class="quote-author"> SOLE Founders</div>
+</section>
+
+<!-- PROCESS -->
+<section class="story-section">
+  <div class="section-label" style="text-align: center; margin-bottom: 24px;">Our Process</div>
+  <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 6vw, 80px); text-align: center; margin-bottom: 60px;">BUILT DIFFERENT</h2>
+  <div class="process-grid">
+    <div class="process-item">
+      <div class="process-icon">⚙️</div>
+      <div class="process-title">Precision Engineering</div>
+      <div class="process-desc">Every component is CNC-machined to tolerances of 0.01mm. No compromises on quality.</div>
+    </div>
+    <div class="process-item">
+      <div class="process-icon">✂️</div>
+      <div class="process-title">Handcrafted Details</div>
+      <div class="process-desc">Upper stitching done by master artisans, ensuring perfect alignment and durability.</div>
+    </div>
+    <div class="process-item">
+      <div class="process-icon">🔬</div>
+      <div class="process-title">Rigorous Testing</div>
+      <div class="process-desc">Each pair undergoes 47 material tests and 200 hours of wear simulation before release.</div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a class="nav-logo" href="index.html">SOLE</a>
+    <p>Footwear engineered at the intersection of performance and design. SS 2026 collection available worldwide.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <ul>
+      <li><a href="Collection.html">New Arrivals</a></li>
+      <li><a href="runners.html">Runners</a></li>
+      <li><a href="mid-tops.html">Mid-Tops</a></li>
+      <li><a href="high-tops.html">High-Tops</a></li>
+      <li><a href="limited-editions.html">Limited Editions</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <ul>
+      <li><a href="Story.html">Our Story</a></li>
+      
+      <li><a href="sizing.html">Sizing Guide</a></li>
+     
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tracking.html">Order Tracking</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span> 2026 SOLE. All rights reserved.</span>
+  <span>Crafted with precision.</span>
+</div>
+
+<script src="js/cart.js"></script>
+<script src="js/auth.js"></script>
+<script>
+//  CURSOR 
+const cursor = document.getElementById('cursor');
+let mx = 0, my = 0, cx = 0, cy = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+document.addEventListener('mouseover', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.add('hover');
+  }
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.remove('hover');
+  }
+});
+(function animCursor() {
+  cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
+  if(cursor) { cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px'; }
+  requestAnimationFrame(animCursor);
+})();
+
+//  TIMELINE ANIMATION 
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.timeline-item').forEach(item => {
+  observer.observe(item);
+});
+
+//  AUTH NAVBAR UPDATE 
+function updateNavbar() {
+  const navLinks = document.getElementById('nav-links');
+  if (!navLinks) return;
+  
+  const lastLi = navLinks.querySelector('li:last-child');
+  const auth = new AuthSystem();
+  auth.loadUser();
+  
+  if (auth.isLoggedIn()) {
+    const user = auth.getCurrentUser();
+    lastLi.innerHTML = `<a href="#" onclick="event.preventDefault(); new AuthSystem().logout();">${user.name} (Logout)</a>`;
+  } else {
+    lastLi.innerHTML = '<a href="login.html">Login</a>';
+  }
+}
+
+window.addEventListener('authChanged', updateNavbar);
+updateNavbar();
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav');
+    const navLinks = document.querySelector('.nav-links');
+    if (nav && navLinks && !document.querySelector('.hamburger')) {
+      const btn = document.createElement('button');
+      btn.className = 'hamburger';
+      btn.setAttribute('aria-label', 'Open navigation menu');
+      btn.type = 'button';
+      nav.insertBefore(btn, navLinks);
+      btn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        nav.classList.toggle('menu-open');
+      });
+    }
+  });
+</script>
+
+
+<script>
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }
+  });
+</script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOLE  Runners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles/index.css">
+<link rel="stylesheet" href="styles/responsive.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e8ff47'/><text x='50' y='70' font-family='Arial' font-weight='bold' font-size='60' text-anchor='middle' fill='%23080808'>S</text></svg>">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">SOLE</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="Collection.html">Collection</a></li>
+    <li><a href="Story.html">Story</a></li>
+    <li><a href="Lookbook.html">Lookbook</a></li>
+    <li><a href="cart.html">Cart (0)</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<!-- COLLECTION -->
+<section id="products">
+  <div class="section-header" style="padding: 120px 48px 40px;">
+    <div>
+      <div class="section-label">Category</div>
+      <h2 class="section-title">Runners</h2>
+    </div>
+    <div class="section-count">01 Model</div>
+  </div>
+  <div class="product-grid" id="product-grid" style="padding: 0 48px 80px;">
+    <!-- Products will be rendered dynamically -->
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a class="nav-logo" href="index.html">SOLE</a>
+    <p>Footwear engineered at the intersection of performance and design. SS 2026 collection available worldwide.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <ul>
+      <li><a href="Collection.html">New Arrivals</a></li>
+      <li><a href="runners.html">Runners</a></li>
+      <li><a href="mid-tops.html">Mid-Tops</a></li>
+      <li><a href="high-tops.html">High-Tops</a></li>
+      <li><a href="limited-editions.html">Limited Editions</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <ul>
+      <li><a href="Story.html">Our Story</a></li>
+      <li><a href="sizing.html">Sizing Guide</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tracking.html">Order Tracking</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span> 2026 SOLE. All rights reserved.</span>
+  <span>Crafted with precision.</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="js/notifs.js"></script><script src="js/store.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/index.js"></script>
+<script>
+async function renderProducts() {
+  const store = new Store();
+  const allProducts = Object.values(await store.getProducts());
+  const products = allProducts.filter(p => p.category.toLowerCase().includes('runner'));
+  const grid = document.getElementById('product-grid');
+  const countEl = document.querySelector('.section-count');
+  
+  if (!grid) return;
+  
+  // Clear existing content
+  grid.innerHTML = '';
+  
+  // Color mapping for 3D models
+  const colorMap = {
+    'apex-x1': '#e8ff47',
+    'blaze-mid': '#ff4d2e',
+    'void-lo': '#c4b5e0',
+    'nova-hi': '#47ffe8',
+    'storm-lo': '#ff47e8',
+    'echo-mid': '#e8ff47',
+    'blaze-hi': '#ff4d2e',
+    'blaze-pro': '#ff4d2e'
+  };
+  
+  products.forEach((product, index) => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.setAttribute('data-color', colorMap[product.id] || '#e8ff47');
+    card.setAttribute('data-accent', '#1a1a00');
+      card.style.cursor = 'pointer';
+      card.onclick = (e) => { if(!e.target.closest('.add-to-cart')) window.location.href = `productDetail.html?id=${product.id}`; };
+    
+    const badge = product.badge ? `<div class="card-badge">${product.badge}</div>` : '';
+    
+    card.innerHTML = `
+      ${badge}
+      <div class="card-canvas-wrap"><canvas class="product-canvas" id="pcanvas-${index}" data-model="${product.model || ''}"></canvas></div>
+      <a href="productDetail.html?id=${product.id}" class="card-info">
+        <div>
+          <div class="card-name">${product.name}</div>
+          <div class="card-style">${product.category}</div>
+        </div>
+        <div class="card-price">$${product.price}</div>
+      </a>
+      <button class="add-to-cart">
+        Add to Cart
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5H19M7 13l-1.1 5M9 21h6m-6 0a1 1 0 01-1-1v-1m6 0v1a1 1 0 01-1 1m0 0H9"/>
+        </svg>
+      </button>
+    `;
+    
+    grid.appendChild(card);
+  });
+  
+  // Update count
+  if (countEl) {
+    countEl.textContent = products.length + ' Model' + (products.length !== 1 ? 's' : '');
+  }
+  
+  // Re-initialize 3D models after DOM update
+  setTimeout(() => {
+    initProductScenes();
+  }, 100);
+}
+
+//  INITIALIZE 
+document.addEventListener('DOMContentLoaded', async () => {
+  renderProducts();
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav');
+    const navLinks = document.querySelector('.nav-links');
+    if (nav && navLinks && !document.querySelector('.hamburger')) {
+      const btn = document.createElement('button');
+      btn.className = 'hamburger';
+      btn.innerHTML = '?';
+      nav.insertBefore(btn, navLinks);
+      btn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        nav.classList.toggle('menu-open');
+      });
+    }
+  });
+</script>
+
+
+<script>
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }
+  });
+</script>
+</body>
+</html>
+
+
+
+
+
+

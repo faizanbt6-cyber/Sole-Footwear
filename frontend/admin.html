@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="js/notifs.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOLE admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #080808;
+    --fg: #f0ece4;
+    --accent: #e8ff47;
+    --accent2: #ff4d2e;
+    --muted: #5a5850;
+    --card-bg: #111110;
+    --border: rgba(240,236,228,0.08);
+  }
+  body { background: var(--bg); color: var(--fg); font-family: 'Syne', sans-serif; min-height: 100vh; cursor: none; }
+  
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  #cursor.hover { width: 40px; height: 40px; background: var(--fg); }
+  
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 48px;
+    z-index: 100;
+    mix-blend-mode: difference;
+  }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--fg); text-decoration: none; }
+  .nav-links { list-style: none; display: flex; gap: 32px; align-items: center; }
+  .nav-links a { color: var(--fg); text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; transition: opacity 0.2s; }
+  .nav-links a:hover { opacity: 1; }
+
+  .admin-shell { max-width: 1200px; margin: 40px auto; padding: 0 24px; padding-top: 120px; }
+  .admin-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(42px, 5vw, 64px); margin-bottom: 12px; }
+  .admin-subtitle { color: var(--muted); margin-bottom: 32px; }
+  .dashboard-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; }
+  .admin-panel, .admin-orders { background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 28px; }
+  .admin-panel h2, .admin-orders h2 { margin-bottom: 18px; font-size: 22px; }
+  .admin-field { display: grid; gap: 10px; margin-bottom: 16px; }
+  .admin-field label { font-size: 12px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .admin-field input, .admin-field textarea, .admin-field select { background: #090909; border: 1px solid var(--border); color: var(--fg); padding: 12px 14px; border-radius: 8px; font-family: inherit; }
+  textarea { min-height: 100px; resize: vertical; }
+  .admin-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 16px; }
+  .admin-btn { background: var(--accent); color: #080808; border: none; padding: 14px 22px; border-radius: 8px; font-weight: 700; cursor: pointer; letter-spacing: .8px; transition: transform 0.2s; }
+  .admin-btn:hover { transform: scale(1.02); }
+  .admin-btn.danger { background: transparent; color: var(--accent2); border: 1px solid var(--accent2); }
+  
+  /* File input styling */
+  input[type="file"] { padding: 8px; border: 1px dashed var(--border); background: #0d0d0d; }
+  input[type="file"]::file-selector-button {
+    background: var(--accent);
+    color: #080808;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-right: 12px;
+    font-family: 'Syne', sans-serif;
+    transition: transform 0.2s;
+  }
+  input[type="file"]::file-selector-button:hover { transform: scale(1.05); }
+
+  .remove-btn { 
+    background: var(--accent); 
+    color: #080808; 
+    border: none; 
+    padding: 8px 16px; 
+    border-radius: 6px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    font-size: 12px;
+    transition: transform 0.2s; 
+  }
+  .remove-btn:hover { transform: scale(1.05); }
+  
+  .save-order-btn { background: var(--accent); color: #080808; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; letter-spacing: .8px; font-size: 12px; }
+  .info-box { background: rgba(232,255,71,0.08); border: 1px solid rgba(232,255,71,0.16); padding: 18px; border-radius: 14px; margin-bottom: 24px; color: var(--fg); }
+  #product-list, #order-list { display: grid; gap: 14px; }
+  .admin-card, .order-card { border: 1px solid var(--border); border-radius: 16px; padding: 18px; background: #0d0d0d; }
+  .admin-card-title { font-size: 18px; margin-bottom: 4px; }
+  .admin-card-meta { color: var(--muted); font-size: 13px; }
+  .admin-card-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; }
+  .order-card { display: grid; gap: 14px; word-break: break-word; overflow-wrap: break-word; }
+  .order-row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--fg); font-size: 14px; }
+  .order-row > div { min-width: 0; flex: 1; word-break: break-word; }
+  .order-row > div:last-child { text-align: right; }
+  .order-controls { display: grid; gap: 14px; align-items: flex-end; grid-template-columns: 1fr 1fr auto; width: 100%; }
+  .order-controls label { display: grid; gap: 8px; font-size: 12px; color: var(--muted); min-width: 0; }
+  .order-controls input, .order-controls select { width: 100%; max-width: 100%; background: #090909; border: 1px solid var(--border); padding: 12px 14px; color: var(--fg); border-radius: 10px; box-sizing: border-box; }
+  .order-items { border-top: 1px solid var(--border); padding-top: 12px; color: var(--muted); font-size: 13px; display: grid; gap: 8px; min-width: 0; word-break: break-word; }
+  .empty-state { color: var(--muted); font-size: 14px; }
+  @media (max-width: 980px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+    .hamburger { display: none; background: none; border: none; color: var(--fg, #f0ece4); font-size: 28px; cursor: pointer; }
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; flex-direction: row; justify-content: space-between; align-items: center; background: rgba(8,8,8,0.95); backdrop-filter: blur(10px); z-index: 1000; position: fixed; width: 100%; top: 0; }
+    .hamburger { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(8,8,8,0.98); padding: 24px; flex-direction: column; gap: 20px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .nav-links.active { display: flex; }
+    .nav-links li { width: 100%; text-align: center; }
+    
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .order-controls { grid-template-columns: 1fr; gap: 12px; }
+    .admin-panel, .admin-orders { padding: 16px; border-radius: 12px; }
+    .admin-card, .order-card { padding: 12px; border-radius: 10px; }
+
+    .nav-links a { font-size: 16px; padding: 10px; display: block; }
+    
+    #hero { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 100px; }
+    .hero-content { margin-top: 0; padding: 0 24px; width: 100%; text-align: center; order: 1; }
+    .hero-eyebrow { justify-content: center; }
+    #hero-canvas { position: relative; height: 50vh; width: 100%; inset: auto; margin-top: auto; order: 2; }
+    
+    #feature { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 80px; }
+    .feature-content { padding: 0 24px; width: 100%; text-align: center; margin-bottom: 20px; order: 1; }
+    .feature-content p { margin: 20px auto; }
+    #feature-canvas { position: relative; height: 50vh; width: 100%; inset: auto; order: 2; }
+
+    .main-container, .collection-container, .cart-container { padding: 0 24px; margin-top: 100px; }
+    .admin-container { grid-template-columns: 1fr; }
+    .auth-card { padding: 32px 24px; }
+  }
+
+  nav.scrolled {
+    background: rgba(8, 8, 8, 0.95);
+    backdrop-filter: blur(10px);
+    mix-blend-mode: normal;
+    
+    transition: all 0.3s ease;
+  }
+</style>
+<link rel="stylesheet" href="styles/responsive.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e8ff47'/><text x='50' y='70' font-family='Arial' font-weight='bold' font-size='60' text-anchor='middle' fill='%23080808'>S</text></svg>">
+</head>
+<body>
+
+<div id="cursor"></div>
+<nav>
+  <a class="nav-logo" href="index.html">SOLE</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="Collection.html">Collection</a></li>
+    <li><a href="Story.html">Story</a></li>
+    <li><a href="Lookbook.html">Lookbook</a></li>
+    <li><a href="cart.html">Cart (0)</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<main class="admin-shell">
+  <div class="admin-header">
+    <h1 class="admin-title">SOLE admin</h1>
+    <p class="admin-subtitle">Add or remove shoes, manage orders, update shipment status, and track every order from here.</p>
+  </div>
+
+  <div class="info-box">
+    <!-- <strong>Admin credentials:</strong> admin@sole.com / Admin123!<br> -->
+    Only users with admin role can access this panel.
+  </div>
+
+  <div class="dashboard-grid">
+    <section class="admin-panel">
+      <h2>Add New Shoe</h2>
+      <form id="product-form">
+        <div class="admin-field">
+          <label for="product-id">Product ID</label>
+          <input id="product-id" type="text" placeholder="enter-id" required />
+        </div>
+        <div class="admin-field">
+          <label for="product-name">Shoe Name</label>
+          <input id="product-name" type="text" placeholder="BLAZE ULTRA" required />
+        </div>
+        <div class="admin-field">
+          <label for="product-category">Category</label>
+          <input id="product-category" type="text" placeholder="Runners / High Top / Limited" required />
+        </div>
+        <div class="admin-field">
+          <label for="product-price">Price</label>
+          <input id="product-price" type="number" step="0.01" placeholder="240" required />
+        </div>
+        <div class="admin-field">
+          <label for="product-badge">Badge</label>
+          <input id="product-badge" type="text" placeholder="New Drop" />
+        </div>
+        <div class="admin-field">
+          <label for="product-rating">Rating</label>
+          <input id="product-rating" type="number" min="1" max="5" step="0.1" placeholder="4.7" />
+        </div>
+        <div class="admin-field">
+          <label for="product-colors">Colors</label>
+          <input id="product-colors" type="text" placeholder="Yellow, Black, Red" />
+        </div>
+        <div class="admin-field">
+          <label for="product-sizes">Sizes</label>
+          <input id="product-sizes" type="text" placeholder="8, 9, 10, 11" />
+        </div>
+        <div class="admin-field">
+          <label for="product-features">Features</label>
+          <textarea id="product-features" placeholder="Lightweight, breathable, responsive"></textarea>
+        </div>
+        <div class="admin-field">
+          <label for="product-model">Upload 3D Model (.glb)</label>
+          <input id="product-model" type="file" accept=".glb" />
+        </div>
+        <div class="admin-field">
+          <label for="product-description">Description</label>
+          <textarea id="product-description" placeholder="Write a short product description"></textarea>
+        </div>
+        <div class="admin-actions">
+          <button class="admin-btn" type="submit">Save Shoe</button>
+          <button class="admin-btn danger" type="reset">Clear Form</button>
+        </div>
+      </form>
+
+      <h2 style="margin-top:40px;">Current Shoe Catalog</h2>
+      <div id="product-list"></div>
+    </section>
+
+    <section class="admin-orders">
+      <h2>Orders & Tracking</h2>
+      <div id="order-list"></div>
+    </section>
+  </div>
+</main>
+
+<script src="js/auth.js"></script>
+<script src="js/store.js"></script>
+<script src="js/admin.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav');
+    const navLinks = document.querySelector('.nav-links');
+    if (nav && navLinks && !document.querySelector('.hamburger')) {
+      const btn = document.createElement('button');
+      btn.className = 'hamburger';
+      btn.innerHTML = '☰';
+      nav.insertBefore(btn, navLinks);
+      btn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        nav.classList.toggle('menu-open');
+      });
+    }
+  });
+</script>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+let mx = 0, my = 0, cx = 0, cy = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+document.addEventListener('mouseover', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.add('hover');
+  }
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.remove('hover');
+  }
+});
+
+(function animCursor() {
+  cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
+  if(cursor) { cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px'; }
+  requestAnimationFrame(animCursor);
+})();
+</script>
+
+
+<script>
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }
+  });
+</script>
+</body>
+</html>
+
+
+
+

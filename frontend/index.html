@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOLE  Footwear Redefined</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles/index.css">
+<link rel="stylesheet" href="styles/responsive.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e8ff47'/><text x='50' y='70' font-family='Arial' font-weight='bold' font-size='60' text-anchor='middle' fill='%23080808'>S</text></svg>">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">SOLE</div>
+  <div class="loader-bar"><div class="loader-fill" id="loader-fill"></div></div>
+  <div class="loader-pct" id="loader-pct">0%</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">SOLE</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="Collection.html">Collection</a></li>
+    <li><a href="Story.html">Story</a></li>
+    <li><a href="Lookbook.html">Lookbook</a></li>
+    <li><a href="cart.html">Cart (0)</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow">SS 2026 Collection</div>
+    <h1 class="hero-title">WALK<br>WITH<br><span>LEGACY</span></h1>
+    <p class="hero-sub">Engineered for the relentless. Every stitch, every sole  crafted to carry you further than you thought possible.</p>
+    <a href="Collection.html" class="hero-cta">
+      Explore Collection
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 8h10M9 4l4 4-4 4"/>
+      </svg>
+    </a>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee-track">
+    <span>Performance</span><span class="accent">&#10022;</span>
+    <span>Precision</span><span class="accent">&#10022;</span>
+    <span>Craftsmanship</span><span class="accent">&#10022;</span>
+    <span>Innovation</span><span class="accent">&#10022;</span>
+    <span>Sole</span><span class="accent">&#10022;</span>
+    <span>SS 2026</span><span class="accent">&#10022;</span>
+    <span>Performance</span><span class="accent">&#10022;</span>
+    <span>Precision</span><span class="accent">&#10022;</span>
+    <span>Craftsmanship</span><span class="accent">&#10022;</span>
+    <span>Innovation</span><span class="accent">&#10022;</span>
+    <span>Sole</span><span class="accent">&#10022;</span>
+    <span>SS 2026</span><span class="accent">&#10022;</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="section-header">
+    <div>
+      <div class="section-label">The Collection</div>
+      <h2 class="section-title">New Arrivals</h2>
+    </div>
+    <div class="section-count">03 Models</div>
+  </div>
+  <div class="product-grid" id="product-grid">
+    <!-- Products will be rendered dynamically -->
+  </div>
+</section>
+
+<!-- FEATURE -->
+<section id="feature">
+  <canvas id="feature-canvas"></canvas>
+  <div class="feature-content">
+    <div class="section-label">Our Process</div>
+    <h2 class="section-title" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,80px);">BUILT<br>DIFFERENT</h2>
+    <p>We obsess over every millimeter. From the carbon-fiber midsole to the hand-stitched upper  our shoes are not manufactured, they are engineered.</p>
+    <div style="display:inline-flex;align-items:center;gap:12px;background:#080808;color:#f0ece4;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:16px 28px;cursor:none;">
+      <a style="text-decoration: none;color:#f0ece4;" href="Story.html">Read Our Story</a>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 8h10M9 4l4 4-4 4"/>
+      </svg>
+    </div>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Years of craft</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">47</div>
+        <div class="stat-label">Materials tested</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0.3g</div>
+        <div class="stat-label">Sole tolerance</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a class="nav-logo" href="#">SOLE</a>
+    <p>Footwear engineered at the intersection of performance and design. SS 2026 collection available worldwide.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <ul>
+      <li><a href="Collection.html">New Arrivals</a></li>
+      <li><a href="runners.html">Runners</a></li>
+      <li><a href="mid-tops.html">Mid-Tops</a></li>
+      <li><a href="high-tops.html">High-Tops</a></li>
+      <li><a href="limited-editions.html">Limited Editions</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <ul>
+      <li><a href="Story.html">Our Story</a></li>
+      <li><a href="sizing.html">Sizing Guide</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tracking.html">Order Tracking</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span> 2026 SOLE. All rights reserved.</span>
+  <span>Crafted with precision.</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/notifs.js"></script><script src="js/store.js"></script>
+<script src="js/index.js"></script>
+<script>
+//  DYNAMIC PRODUCT RENDERING 
+async function renderProducts() {
+  const productGrid = document.getElementById('product-grid');
+  const sectionCount = document.querySelector('.section-count');
+  const products = await store.getProducts();
+  const productIds = Object.keys(products);
+
+  // Show first 3 products for homepage (newest first)
+  const displayProducts = productIds.reverse().slice(0, 3);
+
+  const productCards = displayProducts.map((productId, index) => {
+    const product = products[productId];
+    const colorHex = product.colors && product.colors[0] ? product.colors[0].hex : '#e8ff47';
+    const accentHex = colorHex === '#e8ff47' ? '#1a1a00' : '#fff';
+
+    return `
+      <div class="product-card" data-color="${colorHex}" data-accent="${accentHex}" style="cursor: pointer;" onclick="if(!event.target.closest('.add-to-cart')) window.location.href='productDetail.html?id=${productId}'">
+        <div class="card-badge">${product.badge || 'New'}</div>
+        <div class="card-canvas-wrap"><canvas class="product-canvas" id="pcanvas-${index}" data-model="${product.model || ''}"></canvas></div>
+        <a href="productDetail.html?id=${productId}" class="card-info">
+          <div>
+            <div class="card-name">${product.name}</div>
+            <div class="card-style">${product.category}</div>
+          </div>
+          <div class="card-price">$${product.price}</div>
+        </a>
+        <button class="add-to-cart">
+          Add to Cart
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5H19M7 13l-1.1 5M9 21h6m-6 0a1 1 0 01-1-1v-1m6 0v1a1 1 0 01-1 1m0 0H9"/>
+          </svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  productGrid.innerHTML = productCards;
+
+  // Update count
+  if (sectionCount) {
+    sectionCount.textContent = `${displayProducts.length} Models`;
+  }
+
+  // Re-initialize 3D models after rendering
+  setTimeout(() => {
+    if (typeof initProductScenes === 'function') {
+      initProductScenes();
+    }
+  }, 100);
+}
+
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderProducts);
+} else {
+  renderProducts();
+}
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav');
+    const navLinks = document.querySelector('.nav-links');
+    if (nav && navLinks && !document.querySelector('.hamburger')) {
+      const btn = document.createElement('button');
+      btn.className = 'hamburger';
+      btn.innerHTML = '☰';
+      nav.insertBefore(btn, navLinks);
+      btn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        nav.classList.toggle('menu-open');
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
+
+
+
+
+

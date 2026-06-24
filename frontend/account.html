@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOLE  My Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #080808;
+    --fg: #f0ece4;
+    --accent: #e8ff47;
+    --accent2: #ff4d2e;
+    --muted: #5a5850;
+    --card-bg: #111110;
+    --border: rgba(240,236,228,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  #cursor.hover { width: 40px; height: 40px; background: var(--fg); }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.4;
+  }
+
+    /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 48px;
+    z-index: 100;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .nav-links {
+    list-style: none; display: flex; gap: 32px; align-items: center;
+  }
+  .nav-links a {
+    color: var(--fg); text-decoration: none; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 1px;
+    opacity: 0.6; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  /* ACCOUNT SECTION */
+  .account-container {
+    flex: 1;
+    padding: 120px 48px 80px;
+    max-width: 1200px; margin: 0 auto;
+    width: 100%;
+  }
+
+  .account-header {
+    margin-bottom: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .account-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  .logout-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    padding: 12px 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 4px;
+  }
+  .logout-btn:hover { background: var(--accent2); border-color: var(--accent2); color: white; }
+
+  /* ORDER HISTORY */
+  .orders-section {
+    margin-top: 40px;
+  }
+
+  .orders-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .orders-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .order-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin-bottom: 24px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .order-card:hover { border-color: var(--accent); }
+
+  .order-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .order-meta h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .order-meta p { font-size: 16px; font-weight: 700; color: var(--fg); }
+
+  .order-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .status-pending { background: rgba(255, 77, 46, 0.1); color: var(--accent2); border: 1px solid var(--accent2); }
+  .status-processing { background: rgba(232, 255, 71, 0.1); color: var(--accent); border: 1px solid var(--accent); }
+  .status-shipped { background: rgba(71, 255, 232, 0.1); color: #47ffe8; border: 1px solid #47ffe8; }
+  .status-delivered { background: rgba(196, 181, 224, 0.1); color: #c4b5e0; border: 1px solid #c4b5e0; }
+
+  .order-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .order-meta-group { display: flex; gap: 40px; }
+  @media (max-width: 900px) {
+    .order-card { padding: 16px; margin-bottom: 16px; }
+    .order-meta-group { flex-direction: row; flex-wrap: wrap; gap: 12px; justify-content: flex-start; }
+    .order-top { flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; padding-bottom: 12px; }
+    .order-status { align-self: flex-start; }
+    .order-grid { grid-template-columns: 1fr; gap: 16px; }
+  }
+  
+  .order-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .order-item-row {
+    font-size: 14px;
+    color: rgba(240,236,228,0.8);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .tracking-box {
+    background: rgba(8, 8, 8, 0.5);
+    border: 1px dashed var(--border);
+    padding: 20px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tracking-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tracking-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .track-link {
+    display: inline-block;
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .track-link:hover { opacity: 1; color: var(--accent); }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .empty-state h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; margin-bottom: 16px; }
+  .empty-state p { color: var(--muted); margin-bottom: 32px; }
+  .shop-now-btn {
+    background: var(--accent);
+    color: #080808;
+    padding: 14px 40px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 12px;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .shop-now-btn:hover { transform: scale(1.05); }
+
+  /* FOOTER */
+  footer {
+    padding: 80px 48px 40px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 64px;
+  }
+
+  .footer-brand .nav-logo { font-size: 48px; display: block; margin-bottom: 16px; color: var(--fg); text-decoration: none; }
+  .footer-brand p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul a {
+    font-size: 14px; color: var(--fg);
+    text-decoration: none; opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .footer-col ul a:hover { opacity: 1; }
+
+      .hamburger { display: none; background: none; border: none; color: var(--fg, #f0ece4); font-size: 28px; cursor: pointer; }
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; flex-direction: row; justify-content: space-between; align-items: center; background: rgba(8,8,8,0.95); backdrop-filter: blur(10px); z-index: 1000; position: fixed; width: 100%; top: 0; }
+    .hamburger { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(8,8,8,0.98); padding: 24px; flex-direction: column; gap: 20px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .nav-links.active { display: flex; }
+    .nav-links li { width: 100%; text-align: center; }
+    .nav-links a { font-size: 16px; padding: 10px; display: block; }
+    
+    #hero { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 100px; }
+    .hero-content { margin-top: 0; padding: 0 24px; width: 100%; text-align: center; order: 1; }
+    .hero-eyebrow { justify-content: center; }
+    #hero-canvas { position: relative; height: 50vh; width: 100%; inset: auto; margin-top: auto; order: 2; }
+    
+    #feature { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 80px; }
+    .feature-content { padding: 0 24px; width: 100%; text-align: center; margin-bottom: 20px; order: 1; }
+    .feature-content p { margin: 20px auto; }
+    #feature-canvas { position: relative; height: 50vh; width: 100%; inset: auto; order: 2; }
+
+    .account-container { padding: 100px 24px 60px; }
+    .order-grid { grid-template-columns: 1fr; }
+    footer { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  /* REVIEW MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .review-modal {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .close-modal {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    color: var(--fg);
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  .close-modal:hover { opacity: 1; }
+  
+  .review-btn {
+    background: var(--accent);
+    color: #080808;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .review-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(232, 255, 71, 0.2); }
+
+  .review-form { display: flex; flex-direction: column; gap: 24px; }
+  .review-input-group { display: flex; flex-direction: column; gap: 8px; }
+  .review-input-group label { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 2px; }
+  .review-input-group textarea {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 16px;
+    color: var(--fg);
+    font-family: 'Syne', sans-serif;
+    border-radius: 8px;
+    min-height: 120px;
+    resize: vertical;
+  }
+  
+  .star-select-container { display: flex; gap: 8px; margin-bottom: 20px; }
+  .star-select { font-size: 28px; color: var(--muted); cursor: pointer; transition: color 0.2s; }
+  .star-select.active { color: var(--accent); }
+  
+  .review-images-preview { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .review-img-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+  
+  #review-photos-input { display: none; }
+  .file-upload-label {
+    padding: 24px;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+  }
+  .file-upload-label:hover { border-color: var(--accent); color: var(--accent); }
+
+  .submit-review-final {
+    background: var(--accent);
+    color: #080808;
+    border: none;
+    padding: 18px;
+    border-radius: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+
+  nav.scrolled {
+    background: rgba(8, 8, 8, 0.95);
+    backdrop-filter: blur(10px);
+    mix-blend-mode: normal;
+    
+    transition: all 0.3s ease;
+  }
+</style>
+<link rel="stylesheet" href="styles/responsive.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e8ff47'/><text x='50' y='70' font-family='Arial' font-weight='bold' font-size='60' text-anchor='middle' fill='%23080808'>S</text></svg>">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">SOLE</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="Collection.html">Collection</a></li>
+    <li><a href="Story.html">Story</a></li>
+    <li><a href="Lookbook.html">Lookbook</a></li>
+    <li><a href="cart.html">Cart (0)</a></li>
+    <li><a id="user-name-link" href="account.html">Account</a></li>
+  </ul>
+</nav>
+
+<!-- ACCOUNT CONTENT -->
+<div class="account-container">
+  <div class="account-header">
+    <div>
+      <div class="section-label">Member Profile</div>
+      <h1 class="account-title" id="welcome-message">My Account</h1>
+    </div>
+    <button class="logout-btn" onclick="auth.logout(); window.location.href='index.html';">Log Out</button>
+  </div>
+
+  <div class="orders-section">
+    <h2 class="orders-title">Order History</h2>
+    <div id="orders-list">
+      <!-- Orders will be rendered here -->
+      <div class="empty-state">
+        <h3>No orders yet</h3>
+        <p>You haven't placed any orders with SOLE yet. Start your legacy today.</p>
+        <a href="Collection.html" class="shop-now-btn">Explore Collection</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="review-modal-overlay">
+  <div class="review-modal">
+    <button class="close-modal" id="close-review-modal">&#215;</button>
+    <div class="section-label">Share Your Thoughts</div>
+    <h2 class="orders-title" id="review-product-name" style="margin-bottom: 24px;">Product Name</h2>
+    
+    <form class="review-form" id="account-review-form">
+      <div class="review-input-group">
+        <label>Your Rating</label>
+        <div class="star-select-container" id="star-container">
+          <span class="star-select" data-value="1">&#9733;</span>
+          <span class="star-select" data-value="2">&#9733;</span>
+          <span class="star-select" data-value="3">&#9733;</span>
+          <span class="star-select" data-value="4">&#9733;</span>
+          <span class="star-select" data-value="5">&#9733;</span>
+        </div>
+      </div>
+      
+      <div class="review-input-group">
+        <label>Review Text</label>
+        <textarea id="review-textarea" placeholder="How do they feel on your feet?" required></textarea>
+      </div>
+      
+      <div class="review-input-group">
+        <label>Product Photos</label>
+        <label for="review-photos-input" class="file-upload-label">
+           &#128247; Click to upload photos
+          <input type="file" id="review-photos-input" accept="image/*" multiple>
+        </label>
+        <div class="review-images-preview" id="photo-preview-container"></div>
+      </div>
+      
+      <button type="submit" class="submit-review-final">Post Review</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a class="nav-logo" href="index.html">SOLE</a>
+    <p>Footwear engineered at the intersection of performance and design. SS 2026 collection available worldwide.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <ul>
+      <li><a href="Collection.html">New Arrivals</a></li>
+      <li><a href="runners.html">Runners</a></li>
+      <li><a href="mid-tops.html">Mid-Tops</a></li>
+      <li><a href="high-tops.html">High-Tops</a></li>
+      <li><a href="limited-editions.html">Limited Editions</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <ul>
+      <li><a href="Story.html">Our Story</a></li>
+      <li><a href="sizing.html">Sizing Guide</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tracking.html">Order Tracking</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="js/notifs.js"></script><script src="js/store.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cart.js"></script>
+<script>
+//  CURSOR 
+const cursor = document.getElementById('cursor');
+let mx = 0, my = 0, cx = 0, cy = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+document.addEventListener('mouseover', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.add('hover');
+  }
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.remove('hover');
+  }
+});
+(function animCursor() {
+  cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
+  if(cursor) { cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px'; }
+  requestAnimationFrame(animCursor);
+})();
+
+//  LOAD ORDERS 
+async function loadUserOrders() {
+  const currentUser = auth.getCurrentUser();
+  if (!currentUser) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  document.getElementById('welcome-message').textContent = `Hello, ${currentUser.name.split(' ')[0]}`;
+
+  const store = new Store();
+  const allOrders = await store.getOrders();
+  // Administrators see all store orders; customers see only their own.
+  const userOrders = currentUser.role === 'admin' 
+    ? allOrders 
+    : allOrders.filter(order => 
+        (order.userId && order.userId === currentUser.id) || 
+        (order.userEmail && order.userEmail.toLowerCase() === currentUser.email.toLowerCase())
+      );
+  
+  // Sort by newest first for better visibility
+  userOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  // Update title if admin
+  if (currentUser.role === 'admin') {
+    document.querySelector('.orders-title').innerHTML = 'Storewide Order History <span style="font-size: 14px; color: var(--accent); margin-left:12px; font-family:\'DM Mono\'">Catalog Management</span>';
+  }
+
+  const container = document.getElementById('orders-list');
+  
+  if (userOrders.length === 0) {
+    // Keep empty state
+    return;
+  }
+
+  container.innerHTML = userOrders.map(order => `
+    <div class="order-card">
+      <div class="order-top">
+        <div class="order-meta-group">
+          <div class="order-meta">
+            <h4>Order Number</h4>
+            <p>#${order.id}</p>
+          </div>
+          <div class="order-meta">
+            <h4>Date</h4>
+            <p>${new Date(order.createdAt).toLocaleDateString()}</p>
+          </div>
+          <div class="order-meta">
+            <h4>Total</h4>
+            <p>$${order.total.toFixed(2)}</p>
+          </div>
+        </div>
+        <div class="order-status status-${order.status.toLowerCase()}">${order.status}</div>
+      </div>
+      
+      <div class="order-grid">
+        <div class="order-items-list">
+          <div class="tracking-label" style="margin-bottom: 8px;">Items</div>
+          ${order.items.map(item => `
+            <div class="order-item-row" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>${item.name} ${item.size ? '(' + item.size + ')' : ''} &#215; ${item.quantity}</span>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                ${(order.status.toLowerCase() === 'delivered' && currentUser.role !== 'admin' && currentUser.email !== 'admin@sole.com') ? `
+                  <button class="review-btn" onclick="openReviewModal('${item.name.toLowerCase().replace(/\s+/g, '-')}', '${item.name.replace(/'/g, "\\'")}')">Review</button>
+                ` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div>
+          <div class="tracking-label" style="margin-bottom: 8px;">Shipping To</div>
+          <p style="font-size: 14px; color: rgba(240,236,228,0.7); line-height: 1.5;">
+            ${order.name}<br>
+            ${order.address}
+          </p>
+        </div>
+        
+        <div class="tracking-box">
+          <div class="tracking-label">Tracking Number</div>
+          <div class="tracking-number">${order.trackingCode || 'Generating...'}</div>
+          <a href="tracking.html?orderId=${order.id}&email=${order.userEmail}" class="track-link">Track Shipment &#8594;</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+//  REVIEW SYSTEM LOGIC 
+const reviewModal = document.getElementById('review-modal-overlay');
+const closeReviewModal = document.getElementById('close-review-modal');
+const reviewForm = document.getElementById('account-review-form');
+const starContainer = document.getElementById('star-container');
+const photoInput = document.getElementById('review-photos-input');
+const photoPreview = document.getElementById('photo-preview-container');
+
+let currentReviewProductId = null;
+let currentRating = 5;
+let reviewImages = [];
+
+function openReviewModal(productId, productName) {
+  currentReviewProductId = productId;
+  document.getElementById('review-product-name').textContent = productName;
+  reviewModal.classList.add('active');
+  updateStars(5);
+  reviewForm.reset();
+  photoPreview.innerHTML = '';
+  reviewImages = [];
+}
+
+closeReviewModal.onclick = () => reviewModal.classList.remove('active');
+window.onclick = (e) => { if (e.target === reviewModal) reviewModal.classList.remove('active'); };
+
+function updateStars(val) {
+  currentRating = val;
+  const stars = starContainer.querySelectorAll('.star-select');
+  stars.forEach(s => {
+    if (parseInt(s.dataset.value) <= val) s.classList.add('active');
+    else s.classList.remove('active');
+  });
+}
+
+starContainer.querySelectorAll('.star-select').forEach(star => {
+  star.onclick = () => updateStars(parseInt(star.dataset.value));
+});
+
+photoInput.onchange = (e) => {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      reviewImages.push(ev.target.result);
+      const img = document.createElement('img');
+      img.src = ev.target.result;
+      img.className = 'review-img-preview';
+      photoPreview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+reviewForm.onsubmit = async (e) => {
+  e.preventDefault();
+  const text = document.getElementById('review-textarea').value;
+  const user = auth.getCurrentUser();
+  const store = new Store();
+  
+  const newReview = {
+    name: user.name,
+    rating: currentRating,
+    text: text,
+    images: [...reviewImages],
+    date: new Date().toISOString(),
+    targetName: document.getElementById('review-product-name').textContent
+  };
+  
+  const success = await store.addReview(currentReviewProductId, newReview);
+  if (success) {
+    alert('Thank you for your review!');
+    reviewModal.classList.remove('active');
+  } else {
+    alert('Failed to save review. Please try again.');
+  }
+};
+
+// Ensure login status on load
+document.addEventListener('DOMContentLoaded', loadUserOrders);
+
+// Live Updates: Listen for changes from other tabs (like the checkout page)
+window.addEventListener('storage', (e) => {
+  if (e.key === 'sole_orders') {
+    loadUserOrders();
+  }
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav');
+    const navLinks = document.querySelector('.nav-links');
+    if (nav && navLinks && !document.querySelector('.hamburger')) {
+      const btn = document.createElement('button');
+      btn.className = 'hamburger';
+      btn.innerHTML = '☰';
+      nav.insertBefore(btn, navLinks);
+      btn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        nav.classList.toggle('menu-open');
+      });
+    }
+  });
+</script>
+
+
+<script>
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }
+  });
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

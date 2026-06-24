@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOLE  Lookbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #080808;
+    --fg: #f0ece4;
+    --accent: #e8ff47;
+    --accent2: #ff4d2e;
+    --muted: #5a5850;
+    --card-bg: #111110;
+    --border: rgba(240,236,228,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  #cursor.hover { width: 40px; height: 40px; background: var(--fg); }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.4;
+  }
+
+    /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 48px;
+    z-index: 100;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .nav-links {
+    list-style: none; display: flex; gap: 32px; align-items: center;
+  }
+  .nav-links a {
+    color: var(--fg); text-decoration: none; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 1px;
+    opacity: 0.6; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  /* LOOKBOOK SECTION */
+  #lookbook {
+    padding: 120px 48px 80px;
+    max-width: 1400px; margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 80px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  .section-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 2px;
+    color: var(--muted);
+  }
+
+  /* LOOKBOOK GRID - Unique Masonry Layout */
+  .lookbook-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .lookbook-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    cursor: none;
+    aspect-ratio: 4/5;
+    transition: transform 0.3s ease;
+  }
+  .lookbook-item:hover { transform: scale(1.02); }
+
+  .lookbook-canvas-wrap {
+    width: 100%; height: 100%;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lookbook-canvas-wrap canvas { width: 100% !important; height: 100% !important; display: block; }
+
+  .lookbook-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(8,8,8,0.9), transparent);
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .lookbook-item:hover .lookbook-overlay { opacity: 1; }
+
+  .lookbook-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--fg);
+    margin-bottom: 4px;
+  }
+
+  .lookbook-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    color: var(--muted); text-transform: uppercase;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 80px 48px 40px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 64px;
+  }
+
+  .footer-brand .nav-logo { font-size: 48px; display: block; margin-bottom: 16px; color: var(--fg); text-decoration: none; }
+  .footer-brand p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul a {
+    font-size: 14px; color: var(--fg);
+    text-decoration: none; opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .footer-col ul a:hover { opacity: 1; }
+
+  .footer-bottom {
+    padding: 24px 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+      .hamburger { display: none; background: none; border: none; color: var(--fg, #f0ece4); font-size: 28px; cursor: pointer; }
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; flex-direction: row; justify-content: space-between; align-items: center; background: rgba(8,8,8,0.95); backdrop-filter: blur(10px); z-index: 1000; position: fixed; width: 100%; top: 0; }
+    .hamburger { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(8,8,8,0.98); padding: 24px; flex-direction: column; gap: 20px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .nav-links.active { display: flex; }
+    .nav-links li { width: 100%; text-align: center; }
+    .nav-links a { font-size: 16px; padding: 10px; display: block; }
+    
+    #hero { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 100px; }
+    .hero-content { margin-top: 0; padding: 0 24px; width: 100%; text-align: center; order: 1; }
+    .hero-eyebrow { justify-content: center; }
+    #hero-canvas { position: relative; height: 50vh; width: 100%; inset: auto; margin-top: auto; order: 2; }
+    
+    #feature { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 80px; }
+    .feature-content { padding: 0 24px; width: 100%; text-align: center; margin-bottom: 20px; order: 1; }
+    .feature-content p { margin: 20px auto; }
+    #feature-canvas { position: relative; height: 50vh; width: 100%; inset: auto; order: 2; }
+
+    #lookbook { padding: 100px 24px 60px; }
+    .lookbook-grid { grid-template-columns: 1fr; }
+    footer { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px 32px; }
+    .footer-bottom { padding: 20px 24px; flex-direction: column; gap: 8px; }
+  }
+
+  nav.scrolled {
+    background: rgba(8, 8, 8, 0.95);
+    backdrop-filter: blur(10px);
+    mix-blend-mode: normal;
+    
+    transition: all 0.3s ease;
+  }
+</style>
+<link rel="stylesheet" href="styles/responsive.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e8ff47'/><text x='50' y='70' font-family='Arial' font-weight='bold' font-size='60' text-anchor='middle' fill='%23080808'>S</text></svg>">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">SOLE</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="Collection.html">Collection</a></li>
+    <li><a href="Story.html">Story</a></li>
+    <li><a href="Lookbook.html">Lookbook</a></li>
+    <li><a href="Cart.html" class="cart-link">Cart (0)</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<!-- LOOKBOOK -->
+<section id="lookbook">
+  <div class="section-header">
+    <div>
+      <div class="section-label">The Lookbook</div>
+      <h2 class="section-title">SS 2026<br>Visuals</h2>
+    </div>
+    <div class="section-count">08 Looks</div>
+  </div>
+  <div class="lookbook-grid">
+    <div class="lookbook-item">
+      <div class="lookbook-canvas-wrap"><canvas class="lookbook-canvas" id="lcanvas-0"></canvas></div>
+      <div class="lookbook-overlay">
+        <div class="lookbook-title">Urban Runner</div>
+        <div class="lookbook-desc">City streets</div>
+      </div>
+    </div>
+    <div class="lookbook-item">
+      <div class="lookbook-canvas-wrap"><canvas class="lookbook-canvas" id="lcanvas-1"></canvas></div>
+      <div class="lookbook-overlay">
+        <div class="lookbook-title">Trail Blazer</div>
+        <div class="lookbook-desc">Mountain paths</div>
+      </div>
+    </div>
+    <div class="lookbook-item">
+      <div class="lookbook-canvas-wrap"><canvas class="lookbook-canvas" id="lcanvas-2"></canvas></div>
+      <div class="lookbook-overlay">
+        <div class="lookbook-title">Street Style</div>
+        <div class="lookbook-desc">Concrete jungle</div>
+      </div>
+    </div>
+    <div class="lookbook-item">
+      <div class="lookbook-canvas-wrap"><canvas class="lookbook-canvas" id="lcanvas-3"></canvas></div>
+      <div class="lookbook-overlay">
+        <div class="lookbook-title">Minimalist</div>
+        <div class="lookbook-desc">Clean lines</div>
+      </div>
+    </div>
+    <div class="lookbook-item">
+      <div class="lookbook-canvas-wrap"><canvas class="lookbook-canvas" id="lcanvas-4"></canvas></div>
+      <div class="lookbook-overlay">
+        <div class="lookbook-title">High Fashion</div>
+        <div class="lookbook-desc">Runway ready</div>
+      </div>
+    </div>
+    <div class="lookbook-item">
+      <div class="lookbook-canvas-wrap"><canvas class="lookbook-canvas" id="lcanvas-5"></canvas></div>
+      <div class="lookbook-overlay">
+        <div class="lookbook-title">Athletic Pro</div>
+        <div class="lookbook-desc">Performance mode</div>
+      </div>
+    </div>
+    <div class="lookbook-item">
+      <div class="lookbook-canvas-wrap"><canvas class="lookbook-canvas" id="lcanvas-6"></canvas></div>
+      <div class="lookbook-overlay">
+        <div class="lookbook-title">Casual Vibes</div>
+        <div class="lookbook-desc">Everyday wear</div>
+      </div>
+    </div>
+    <div class="lookbook-item">
+      <div class="lookbook-canvas-wrap"><canvas class="lookbook-canvas" id="lcanvas-7"></canvas></div>
+      <div class="lookbook-overlay">
+        <div class="lookbook-title">Limited Edition</div>
+        <div class="lookbook-desc">Exclusive drop</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a class="nav-logo" href="index.html">SOLE</a>
+    <p>Footwear engineered at the intersection of performance and design. SS 2026 collection available worldwide.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <ul>
+      <li><a href="Collection.html">New Arrivals</a></li>
+      <li><a href="runners.html">Runners</a></li>
+      <li><a href="mid-tops.html">Mid-Tops</a></li>
+      <li><a href="high-tops.html">High-Tops</a></li>
+      <li><a href="limited-editions.html">Limited Editions</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <ul>
+      <li><a href="Story.html">Our Story</a></li>
+      
+      <li><a href="sizing.html">Sizing Guide</a></li>
+      
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tracking.html">Order Tracking</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span> 2026 SOLE. All rights reserved.</span>
+  <span>Crafted with precision.</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/auth.js"></script>
+<script>
+//  CURSOR 
+const cursor = document.getElementById('cursor');
+let mx = 0, my = 0, cx = 0, cy = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+document.addEventListener('mouseover', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.add('hover');
+  }
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.remove('hover');
+  }
+});
+(function animCursor() {
+  cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
+  if(cursor) { cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px'; }
+  requestAnimationFrame(animCursor);
+})();
+
+//  SHARED SHOE GEOMETRY BUILDER 
+async function buildShoe(scene, color1 = 0xe8ff47, color2 = 0x111111, color3 = 0xffffff) {
+  return new Promise((resolve) => {
+    const loader = new THREE.GLTFLoader();
+    loader.load('assets/models/nike_air_zoom_pegasus_36.glb', (gltf) => {
+      const group = gltf.scene;
+      scene.add(group);
+      resolve(group);
+    }, undefined, (error) => {
+      console.error('GLB load failed:', error);
+      const group = new THREE.Group();
+      scene.add(group);
+      resolve(group);
+    });
+  });
+}
+
+//  LOOKBOOK SCENES 
+const palettes = [
+  [0xe8ff47, 0x1a1a00, 0xffffff],
+  [0xff4d2e, 0x1a0800, 0xfff0ee],
+  [0xc4b5e0, 0x1a0a2e, 0xffffff],
+  [0x47ffe8, 0x001a1a, 0xffffff],
+  [0xff47e8, 0x1a001a, 0xffffff],
+  [0xe8ff47, 0x1a1a00, 0xffffff],
+];
+
+function fitLookbookScene(renderer, camera, canvas) {
+  const wrap = canvas.parentElement || canvas;
+  const w = Math.max(1, wrap.offsetWidth || canvas.clientWidth || window.innerWidth);
+  const h = Math.max(1, wrap.offsetHeight || canvas.clientHeight || w);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.position.z = Math.min(7.4, Math.max(5.4, 6.2 - (w / h - 1) * 0.5));
+  camera.updateProjectionMatrix();
+  return { w, h };
+}
+
+function lookbookScale(width, height) {
+  const shortest = Math.min(width, height);
+  if (shortest < 340) return 0.78;
+  if (shortest < 520) return 0.88;
+  return 1;
+}
+
+(async () => {
+  const canvases = document.querySelectorAll('.lookbook-canvas');
+  for (let idx = 0; idx < canvases.length; idx++) {
+    const canvas = canvases[idx];
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.3;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 50);
+    camera.position.set(0, 0.5, 6);
+    camera.lookAt(0, 0, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const key = new THREE.DirectionalLight(palettes[idx % palettes.length][0], 2);
+    key.position.set(3, 5, 3); scene.add(key);
+    const fill = new THREE.DirectionalLight(0xffffff, 1);
+    fill.position.set(-4, 3, -2); scene.add(fill);
+
+    const shoe = await buildShoe(scene, 0, 0, 0);
+    shoe.rotation.y = -0.8 - idx * 0.3; // Varied rotations for uniqueness
+    shoe.position.y = -0.2;
+
+    const wrap = canvas.parentElement;
+    let { w, h } = fitLookbookScene(renderer, camera, canvas);
+    shoe.scale.setScalar(lookbookScale(w, h));
+
+    const ro = new ResizeObserver(() => {
+      const size = fitLookbookScene(renderer, camera, canvas);
+      w = size.w; h = size.h;
+      shoe.scale.setScalar(lookbookScale(w, h));
+    });
+    ro.observe(wrap);
+
+    let hovered = false;
+    wrap.parentElement.addEventListener('mouseenter', () => hovered = true);
+    wrap.parentElement.addEventListener('mouseleave', () => hovered = false);
+
+    let t = idx * 1.5;
+    (function animate() {
+      requestAnimationFrame(animate);
+      t += 0.01;
+      shoe.rotation.y += hovered ? 0.015 : 0.005;
+      shoe.position.y = -0.2 + Math.sin(t * 0.8) * 0.05;
+      renderer.render(scene, camera);
+    })();
+  }
+})();
+
+//  AUTH NAVBAR UPDATE 
+function updateNavbar() {
+  const navLinks = document.getElementById('nav-links');
+  if (!navLinks) return;
+  
+  const lastLi = navLinks.querySelector('li:last-child');
+  const auth = new AuthSystem();
+  auth.loadUser();
+  
+  if (auth.isLoggedIn()) {
+    const user = auth.getCurrentUser();
+    lastLi.innerHTML = `<a href="#" onclick="event.preventDefault(); new AuthSystem().logout();">${user.name} (Logout)</a>`;
+  } else {
+    lastLi.innerHTML = '<a href="login.html">Login</a>';
+  }
+}
+
+window.addEventListener('authChanged', updateNavbar);
+updateNavbar();
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav');
+    const navLinks = document.querySelector('.nav-links');
+    if (nav && navLinks && !document.querySelector('.hamburger')) {
+      const btn = document.createElement('button');
+      btn.className = 'hamburger';
+      btn.innerHTML = '☰';
+      nav.insertBefore(btn, navLinks);
+      btn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        nav.classList.toggle('menu-open');
+      });
+    }
+  });
+</script>
+
+
+<script>
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }
+  });
+</script>
+</body>
+</html> 
+
+
+

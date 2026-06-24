@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOLE  Checkout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #080808;
+    --fg: #f0ece4;
+    --accent: #e8ff47;
+    --accent2: #ff4d2e;
+    --muted: #5a5850;
+    --card-bg: #111110;
+    --border: rgba(240,236,228,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  #cursor.hover { width: 40px; height: 40px; background: var(--fg); }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.4;
+  }
+
+    /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 48px;
+    z-index: 100;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .nav-links {
+    list-style: none; display: flex; gap: 32px; align-items: center;
+  }
+  .nav-links a {
+    color: var(--fg); text-decoration: none; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 1px;
+    opacity: 0.6; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  /* CHECKOUT CONTAINER */
+  .checkout-container {
+    max-width: 1200px; margin: 0 auto;
+    padding: 120px 48px 80px;
+  }
+
+  .checkout-header {
+    margin-bottom: 60px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .checkout-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  /* CHECKOUT LAYOUT */
+  .checkout-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .form-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 32px;
+    border-radius: 8px;
+  }
+
+  .form-section h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    color: var(--fg);
+  }
+
+  .form-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .form-group.full { grid-template-columns: 1fr; }
+
+  label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  input[type="text"], input[type="email"], select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    padding: 12px 16px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: border 0.2s;
+  }
+  input[type="text"]:focus, input[type="email"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  /* PAYMENT METHOD SELECTOR */
+  .payment-method-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .payment-option {
+    position: relative;
+  }
+
+  input[type="radio"] {
+    display: none;
+  }
+
+  .payment-label {
+    display: block;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    padding: 20px;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .payment-label svg {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .payment-label-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--fg);
+  }
+
+  input[type="radio"]:checked + .payment-label {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #080808;
+  }
+
+  input[type="radio"]:checked + .payment-label .payment-label-text {
+    color: #080808;
+  }
+
+  .payment-form {
+    display: none;
+  }
+
+  .payment-form.active {
+    display: block;
+  }
+
+  .form-row-3 {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* ORDER REVIEW */
+  .order-review {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+
+  .review-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .review-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .review-item:last-child { border-bottom: none; }
+
+  .item-info {
+    flex: 1;
+  }
+
+  .item-name {
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .item-qty {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .item-price {
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 80px;
+    text-align: right;
+  }
+
+  /* ORDER SUMMARY */
+  .checkout-summary {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 32px;
+    border-radius: 8px;
+    position: sticky;
+    top: 100px;
+  }
+
+  .summary-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .summary-row {
+    display: flex; justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+
+  .summary-row.total {
+    font-size: 20px; font-weight: 700;
+    color: var(--accent);
+    padding: 24px 0 0;
+    margin-top: 12px;
+    border-top: 2px solid var(--border);
+  }
+
+  .place-order-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #080808;
+    border: none;
+    padding: 16px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: transform 0.2s;
+  }
+  .place-order-btn:hover { transform: scale(1.02); }
+
+  .back-to-cart {
+    width: 100%;
+    background: transparent;
+    color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 12px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .back-to-cart:hover { background: var(--border); }
+
+  /* FOOTER */
+  footer {
+    padding: 80px 48px 40px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 64px;
+  }
+
+  .footer-brand .nav-logo { font-size: 48px; display: block; margin-bottom: 16px; color: var(--fg); text-decoration: none; }
+  .footer-brand p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul a {
+    font-size: 14px; color: var(--fg);
+    text-decoration: none; opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .footer-col ul a:hover { opacity: 1; }
+
+  .footer-bottom {
+    padding: 24px 48px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+      .hamburger { display: none; background: none; border: none; color: var(--fg, #f0ece4); font-size: 28px; cursor: pointer; }
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; flex-direction: row; justify-content: space-between; align-items: center; background: rgba(8,8,8,0.95); backdrop-filter: blur(10px); z-index: 1000; position: fixed; width: 100%; top: 0; }
+    .hamburger { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(8,8,8,0.98); padding: 24px; flex-direction: column; gap: 20px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .nav-links.active { display: flex; }
+    .nav-links li { width: 100%; text-align: center; }
+    .nav-links a { font-size: 16px; padding: 10px; display: block; }
+    
+    #hero { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 100px; }
+    .hero-content { margin-top: 0; padding: 0 24px; width: 100%; text-align: center; order: 1; }
+    .hero-eyebrow { justify-content: center; }
+    #hero-canvas { position: relative; height: 50vh; width: 100%; inset: auto; margin-top: auto; order: 2; }
+    
+    #feature { flex-direction: column; justify-content: flex-start; height: auto; min-height: 100vh; padding-top: 80px; }
+    .feature-content { padding: 0 24px; width: 100%; text-align: center; margin-bottom: 20px; order: 1; }
+    .feature-content p { margin: 20px auto; }
+    #feature-canvas { position: relative; height: 50vh; width: 100%; inset: auto; order: 2; }
+
+    .checkout-container { padding: 100px 24px 60px; }
+    .checkout-layout { grid-template-columns: 1fr; }
+    .checkout-summary { position: static; }
+    .form-group { grid-template-columns: 1fr; }
+    .form-row-3 { grid-template-columns: 1fr; }
+    footer { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px 32px; }
+    .footer-bottom { padding: 20px 24px; flex-direction: column; gap: 8px; }
+  }
+
+  nav.scrolled {
+    background: rgba(8, 8, 8, 0.95);
+    backdrop-filter: blur(10px);
+    mix-blend-mode: normal;
+    
+    transition: all 0.3s ease;
+  }
+</style>
+<link rel="stylesheet" href="styles/responsive.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e8ff47'/><text x='50' y='70' font-family='Arial' font-weight='bold' font-size='60' text-anchor='middle' fill='%23080808'>S</text></svg>">
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">SOLE</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="Collection.html">Collection</a></li>
+    <li><a href="Story.html">Story</a></li>
+    <li><a href="Lookbook.html">Lookbook</a></li>
+    <li><a href="Cart.html" class="cart-link">Cart (0)</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<!-- CHECKOUT -->
+<div class="checkout-container">
+  <div class="checkout-header">
+    <div class="section-label">Complete Your Order</div>
+    <h1 class="checkout-title">Checkout</h1>
+  </div>
+
+  <div class="checkout-layout">
+    <div class="checkout-form">
+      <!-- SHIPPING SECTION -->
+      <div class="form-section">
+        <h3>Shipping Address</h3>
+        <div class="form-group full">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com" required/>
+        </div>
+        <div class="form-group">
+          <label for="fname">First Name</label>
+          <input type="text" id="fname" placeholder="John" required/>
+        </div>
+        <div class="form-group">
+          <label for="lname">Last Name</label>
+          <input type="text" id="lname" placeholder="Doe" required/>
+        </div>
+        <div class="form-group full">
+          <label for="address">Street Address</label>
+          <input type="text" id="address" placeholder="123 Main St" required/>
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" placeholder="New York" required/>
+        </div>
+        <div class="form-group">
+          <label for="state">State</label>
+          <input type="text" id="state" placeholder="NY" required/>
+        </div>
+        <div class="form-group">
+          <label for="zip">ZIP Code</label>
+          <input type="text" id="zip" placeholder="10001" required/>
+        </div>
+        <div class="form-group full">
+          <label for="country">Country</label>
+          <input type="text" id="country" placeholder="United States" required/>
+        </div>
+      </div>
+
+      <!-- PAYMENT METHOD SECTION -->
+      <div class="form-section">
+        <h3>Payment Method</h3>
+        <div class="payment-method-group">
+          <div class="payment-option">
+            <input type="radio" id="card-payment" name="payment-method" value="card" checked/>
+            <label for="card-payment" class="payment-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2"/>
+                <path d="M1 10h22"/>
+              </svg>
+              <div class="payment-label-text">Credit/Debit Card</div>
+            </label>
+          </div>
+          <div class="payment-option">
+            <input type="radio" id="cash-payment" name="payment-method" value="cash"/>
+            <label for="cash-payment" class="payment-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v12M9 9h6a3 3 0 010 6H9a1 1 0 010-2h6a1 1 0 000-2H9"/>
+              </svg>
+              <div class="payment-label-text">Cash on Delivery</div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD PAYMENT FORM -->
+      <div class="form-section payment-form active" id="card-form">
+        <h3>Card Information</h3>
+        <div class="form-group full">
+          <label for="cardname">Cardholder Name</label>
+          <input type="text" id="cardname" placeholder="John Doe"/>
+        </div>
+        <div class="form-group full">
+          <label for="cardnum">Card Number</label>
+          <input type="text" id="cardnum" placeholder="1234 5678 9012 3456" maxlength="19"/>
+        </div>
+        <div class="form-row-3">
+          <div>
+            <label for="expiry">Expiry Date</label>
+            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5"/>
+          </div>
+          <div>
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" placeholder="123" maxlength="3"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- COD INFO -->
+      <div class="form-section payment-form" id="cod-form" style="text-align: center;">
+        <h3>Cash on Delivery</h3>
+        <p style="color: var(--muted); font-size: 14px; line-height: 1.6;">
+          Pay directly to our delivery partner when your order arrives. Secure, convenient, and hassle-free.
+        </p>
+        <div style="background: var(--bg); border: 1px solid var(--border); padding: 16px; border-radius: 4px; margin-top: 16px;">
+          <div style="font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px;">Estimated Delivery</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--accent);">3-5 Business Days</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="checkout-summary">
+      <div class="summary-title">Order Review</div>
+      
+      <div class="order-review" id="order-items">
+        <!-- Items rendered here -->
+      </div>
+
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="subtotal">$0.00</span>
+      </div>
+      <div class="summary-row">
+        <span>Shipping</span>
+        <span>Free</span>
+      </div>
+      <div class="summary-row">
+        <span>Tax (8%)</span>
+        <span id="tax">$0.00</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span id="total">$0.00</span>
+      </div>
+
+      <button class="place-order-btn" id="place-order-btn">Place Order</button>
+      <button class="back-to-cart" onclick="window.location.href='Cart.html'">Back to Cart</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a class="nav-logo" href="index.html">SOLE</a>
+    <p>Footwear engineered at the intersection of performance and design. SS 2026 collection available worldwide.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <ul>
+      <li><a href="Collection.html">New Arrivals</a></li>
+      <li><a href="runners.html">Runners</a></li>
+      <li><a href="mid-tops.html">Mid-Tops</a></li>
+      <li><a href="high-tops.html">High-Tops</a></li>
+      <li><a href="limited-editions.html">Limited Editions</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <ul>
+      <li><a href="Story.html">Our Story</a></li>
+      
+      <li><a href="sizing.html">Sizing Guide</a></li>
+   
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="tracking.html">Order Tracking</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span> 2026 SOLE. All rights reserved.</span>
+  <span>Crafted with precision.</span>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/notifs.js"></script><script src="js/store.js"></script>
+<script>
+//  CURSOR 
+const cursor = document.getElementById('cursor');
+let mx = 0, my = 0, cx = 0, cy = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+document.addEventListener('mouseover', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.add('hover');
+  }
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('a, button, .product-card, .hero-cta, .color-swatch, .selector-btn, .carousel-btn, .wishlist-btn, .thumb, .review-card, .related-card-btn, .remove-btn, .checkout-btn, .continue-shop, .admin-sidebar li, .tab-btn, [onclick]')) {
+    if (cursor) cursor.classList.remove('hover');
+  }
+});
+(function animCursor() {
+  cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
+  if(cursor) { cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px'; }
+  requestAnimationFrame(animCursor);
+})();
+
+//  RENDER ORDER REVIEW 
+function renderOrderReview() {
+  const container = document.getElementById('order-items');
+  
+  if (cart.items.length === 0) {
+    container.innerHTML = '<p style="color: var(--muted); font-size: 12px;">No items in cart</p>';
+    return;
+  }
+
+  container.innerHTML = cart.items.map((item) => `
+    <div class="review-item">
+      <div class="item-info">
+        <div class="item-name">${item.name}</div>
+        <div class="item-qty">Qty: ${item.quantity}</div>
+      </div>
+      <div class="item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+    </div>
+  `).join('');
+
+  updateSummary();
+}
+
+//  UPDATE SUMMARY 
+function updateSummary() {
+  const subtotal = cart.getTotal();
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+
+  document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+  document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+}
+
+//  PAYMENT METHOD TOGGLE 
+document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+    const cardForm = document.getElementById('card-form');
+    const codForm = document.getElementById('cod-form');
+    
+    if (paymentMethod === 'card') {
+      cardForm.classList.add('active');
+      codForm.classList.remove('active');
+    } else {
+      cardForm.classList.remove('active');
+      codForm.classList.add('active');
+    }
+  });
+});
+
+//  PLACE ORDER 
+document.getElementById('place-order-btn').addEventListener('click', async () => {
+  const fname = document.getElementById('fname').value.trim();
+  const lname = document.getElementById('lname').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+
+  // Validate shipping info (always required)
+  if (!fname || !lname || !email || !address) {
+    cart.showNotification('Please fill all shipping details');
+    return;
+  }
+
+  // Validate payment info if card payment
+  if (paymentMethod === 'card') {
+    const cardname = document.getElementById('cardname').value.trim();
+    const cardnum = document.getElementById('cardnum').value.trim();
+    const expiry = document.getElementById('expiry').value.trim();
+    const cvv = document.getElementById('cvv').value.trim();
+
+    if (!cardname || !cardnum || !expiry || !cvv) {
+      cart.showNotification('Please fill all card details');
+      return;
+    }
+  }
+
+  if (cart.items.length === 0) {
+    cart.showNotification('Your cart is empty');
+    return;
+  }
+
+  const subtotal = cart.getTotal();
+  const tax = subtotal * 0.08;
+  const total = parseFloat((subtotal + tax).toFixed(2));
+  const method = paymentMethod === 'card' ? 'Card Payment' : 'Cash on Delivery';
+
+  const orderNumber = 'SL-' + Math.floor(100000 + Math.random() * 900000);
+
+  const currentUser = auth.getCurrentUser();
+  const newOrder = {
+    id: orderNumber,
+    userId: currentUser?.id || null,
+    userEmail: currentUser?.email || email,
+    name: `${fname} ${lname}`,
+    address,
+    paymentMethod: method,
+    subtotal,
+    tax,
+    total,
+    items: cart.items.map(item => ({ ...item, frontendId: item.id })),
+    status: 'Processing',
+    trackingCode: orderNumber,
+    createdAt: new Date().toISOString()
+  };
+
+  const store = new Store();
+  const created = await store.createOrder(newOrder);
+  
+  if (created && created.message) {
+    alert("Server Error: " + created.message + "\nPlease copy this error and send it to me.");
+    return; // Stop the redirect so they can read the error!
+  }
+  
+  cart.showNotification(`Order placed! ${method} - Order #${created.id || orderNumber}`);
+    
+  setTimeout(() => {
+    cart.clear();
+    window.location.href = 'index.html';
+  }, 2000);
+});
+
+// Initial render
+renderOrderReview();
+
+//  AUTH CHECK 
+if (!auth.isLoggedIn()) {
+  const checkoutSec = document.querySelector('#checkout');
+  if (checkoutSec) {
+    checkoutSec.innerHTML = `
+      <div style="padding: 120px 48px; text-align: center; max-width: 600px; margin: 0 auto;">
+        <h2 style="font-family: 'Bebas Neue'; font-size: 36px; margin-bottom: 20px;">Login Required</h2>
+        <p style="font-size: 15px; color: rgba(240,236,228,0.8); margin-bottom: 40px;">Please login or create an account to proceed with checkout.</p>
+        <div style="display: flex; gap: 16px; justify-content: center;">
+          <a href="login.html" style="background: var(--accent); color: #080808; padding: 14px 32px; border-radius: 4px; text-decoration: none; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; display: inline-block;">Login</a>
+          <a href="signup.html" style="background: transparent; color: var(--fg); border: 2px solid var(--border); padding: 12px 30px; border-radius: 4px; text-decoration: none; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; display: inline-block;">Sign Up</a>
+        </div>
+      </div>
+    `;
+  }
+  const footer = document.querySelector('footer');
+  if (footer) footer.style.display = 'none';
+}
+
+//  AUTH NAVBAR UPDATE 
+function updateNavbar() {
+  const navLinks = document.getElementById('nav-links');
+  if (!navLinks) return;
+  
+  const lastLi = navLinks.querySelector('li:last-child');
+  const auth = new AuthSystem();
+  auth.loadUser();
+  
+  if (auth.isLoggedIn()) {
+    const user = auth.getCurrentUser();
+    lastLi.innerHTML = `<a href="#" onclick="event.preventDefault(); new AuthSystem().logout();">${user.name} (Logout)</a>`;
+  } else {
+    lastLi.innerHTML = '<a href="login.html">Login</a>';
+  }
+}
+
+window.addEventListener('authChanged', updateNavbar);
+updateNavbar();
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav');
+    const navLinks = document.querySelector('.nav-links');
+    if (nav && navLinks && !document.querySelector('.hamburger')) {
+      const btn = document.createElement('button');
+      btn.className = 'hamburger';
+      btn.innerHTML = '☰';
+      nav.insertBefore(btn, navLinks);
+      btn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        nav.classList.toggle('menu-open');
+      });
+    }
+  });
+</script>
+
+
+<script>
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (nav) {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }
+  });
+</script>
+</body>
+</html>
+
+
+
+
